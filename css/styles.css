@@ -1,0 +1,173 @@
+/* styles.css */
+
+/* Asegura que la página ocupe toda la altura de la ventana */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+}
+
+/* Imagen de fondo */
+body {
+    background-image: url('fondo.jpg'); /* Reemplaza con la ruta de tu imagen de fondo */
+    background-size: cover; /* Cubre toda la pantalla */
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative; /* Para posicionar elementos hijos */
+}
+
+/* Logo en la parte superior */
+.logo {
+    position: absolute;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) scale(1);
+    width: 150px;
+    animation: pulsar 3s infinite ease-in-out;
+    z-index: 10; /* Asegura que esté por encima de otros elementos */
+}
+
+/* Animación de pulsación para el logo */
+@keyframes pulsar {
+    0%, 100% {
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.05);
+    }
+}
+
+/* Contenedor principal */
+.container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+    padding: 100px 20px 60px; /* Ajusta el padding para el logo y el botón */
+    box-sizing: border-box;
+}
+
+/* Sección del cuerpo humano */
+.human-body {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+}
+
+.human-body svg {
+    width: 200px; /* Ajusta el tamaño según sea necesario */
+    height: auto;
+}
+
+/* Tooltip */
+.tooltip {
+    position: absolute;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    white-space: nowrap;
+    font-size: 14px;
+    z-index: 20;
+}
+
+/* Carrusel de tarjetas */
+.carousel {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    padding: 20px 0;
+}
+
+.carousel-track {
+    display: flex;
+    animation: scroll 20s linear infinite;
+}
+
+.carousel-track:hover {
+    animation-play-state: paused; /* Pausa la animación al pasar el cursor */
+}
+
+.card {
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 250px;
+    min-width: 250px;
+    margin-right: 20px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    flex-shrink: 0;
+}
+
+.card h3 {
+    margin: 15px 0 10px;
+}
+
+.card p {
+    color: #555;
+}
+
+.card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Animación del carrusel */
+@keyframes scroll {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Botón "Iniciar" */
+.btn-iniciar {
+    position: fixed; /* Usamos fixed para que siempre esté en la esquina */
+    bottom: 20px;
+    right: 20px;
+    padding: 20px 40px;
+    font-size: 1.5em;
+    color: #fff;
+    background-color: rgba(0, 123, 255, 0.8);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+    z-index: 10; /* Por encima de otros elementos */
+}
+
+.btn-iniciar:hover {
+    background-color: rgba(0, 123, 255, 1);
+    transform: scale(1.05);
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
+    .cards-section {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card {
+        width: 80%;
+    }
+
+    .human-body svg {
+        width: 150px;
+    }
+
+    .logo {
+        width: 120px;
+    }
+}

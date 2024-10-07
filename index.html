@@ -1,1 +1,72 @@
-Hola Mundo
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio</title>
+    <style>
+        /* Asegura que la página ocupe toda la altura de la ventana */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Establece la imagen de fondo para que cubra toda la pantalla */
+        body {
+            background-image: url('/img/portada.jpg'); /* Reemplaza con la ruta de tu imagen */
+            background-size: cover; /* Hace que la imagen cubra toda la pantalla */
+            background-position: center; /* Centra la imagen */
+            background-repeat: no-repeat; /* Evita que la imagen se repita */
+            position: relative; /* Posición relativa para ajustar el botón y logo */
+        }
+
+        /* Logo en la parte superior centrado */
+        .logo {
+            position: absolute;
+            top: 20px; /* Ajusta la distancia desde la parte superior */
+            left: 50%; /* Centra horizontalmente */
+            transform: translateX(-50%); /* Ajusta para centrar correctamente */
+            width: 900px; /* Tamaño del logo */
+            animation: pulsar 3s infinite ease-in-out; /* Animación de pulsación */
+        }
+
+        /* Animación de crecimiento y encogimiento suave */
+        @keyframes pulsar {
+            0%, 100% {
+                transform: translateX(-50%) scale(1); /* Tamaño original */
+            }
+            50% {
+                transform: translateX(-50%) scale(1.1); /* Crece ligeramente */
+            }
+        }
+
+        /* Estilos para el botón */
+        .btn-iniciar {
+            position: absolute;
+            bottom: 20px; /* Distancia desde la parte inferior de la pantalla */
+            right: 20px; /* Distancia desde la parte derecha de la pantalla */
+            padding: 40px 90px; /* Ajusta el tamaño del botón */
+            font-size: 1.5em; /* Aumenta el tamaño del texto del botón */
+            color: #fff;
+            background-color: rgba(0, 123, 255, 0.8); /* Color de fondo semi-transparente */
+            border: none;
+            border-radius: 10px; /* Bordes redondeados */
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-iniciar:hover {
+            background-color: rgba(0, 123, 255, 1); /* Color al pasar el cursor */
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo en la parte superior -->
+    <img src="/img/logo.png" alt="Logo" class="logo">
+
+    <!-- Botón "Iniciar" que redirige a otra página -->
+    <a href="nivel1.html" class="btn-iniciar">Iniciar</a>
+</body>
+</html>

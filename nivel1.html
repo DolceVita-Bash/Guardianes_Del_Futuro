@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevención del ASI</title>
+    <style>
+        /* styles.css */
+
+        /* Asegura que la página ocupe toda la altura de la ventana */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f0f8ff; /* Color de fondo suave */
+        }
+
+        /* Imagen de fondo */
+        body {
+            background-image: url('fondo.jpg'); /* Reemplaza con la ruta de tu imagen de fondo */
+            background-size: cover; /* Cubre toda la pantalla */
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative; /* Para posicionar elementos hijos */
+        }
+
+        /* Logo en la parte superior */
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%) scale(1);
+            width: 150px;
+            animation: pulsar 3s infinite ease-in-out;
+            z-index: 10; /* Asegura que esté por encima de otros elementos */
+        }
+
+        /* Animación de pulsación para el logo */
+        @keyframes pulsar {
+            0%, 100% {
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        /* Contenedor principal */
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
+            padding: 100px 20px 60px; /* Ajusta el padding para el logo y el botón */
+            box-sizing: border-box;
+        }
+
+        /* Sección del cuerpo humano */
+        .human-body {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+
+        .human-body svg {
+            width: 200px; /* Ajusta el tamaño según sea necesario */
+            height: auto;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            white-space: nowrap;
+            font-size: 14px;
+            z-index: 20;
+        }
+
+        /* Carrusel de tarjetas */
+        .carousel {
+            position: relative;
+            width: 100%;
+            overflow: hidden;
+            padding: 20px 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+        }
+
+        .carousel-track {
+            display: flex;
+            animation: scroll 30s linear infinite;
+        }
+
+        .carousel-track:hover {
+            animation-play-state: paused; /* Pausa la animación al pasar el cursor */
+        }
+
+        .card {
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            min-width: 200px;
+            margin-right: 20px;
+            padding: 20px;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        .card.selected {
+            border: 2px solid #007bff;
+            transform: scale(1.05);
+        }
+
+        .card h3 {
+            margin: 15px 0 10px;
+            color: #333;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 14px;
+        }
+
+        .card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Animación del carrusel */
+        @keyframes scroll {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        /* Botón "Iniciar" */
+        .btn-iniciar {
+            position: fixed; /* Usamos fixed para que siempre esté en la esquina */
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            color: #fff;
+            background-color: rgba(0, 123, 255, 0.8);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            z-index: 10; /* Por encima de otros elementos */
+        }
+
+        .btn-iniciar:hover {
+            background-color: rgba(0, 123, 255, 1);
+            transform: scale(1.05);
+        }
+
+        /* Modal para mensajes */
+        .modal {
+            display: none; /* Oculto por defecto */
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5); /* Fondo semi-transparente */
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; /* 15% desde la parte superior y centrado */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+        }
+
+        /* Estilos para los botones del carrusel */
+        .carousel-button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(0, 0, 0, 0.5);
+            border: none;
+            color: #fff;
+            font-size: 2em;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 50%;
+            z-index: 30;
+            transition: background-color 0.3s ease;
+        }
+
+        .carousel-button.prev {
+            left: 10px;
+        }
+
+        .carousel-button.next {
+            right: 10px;
+        }
+
+        .carousel-button:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            .carousel {
+                padding: 10px 0;
+            }
+
+            .card {
+                width: 150px;
+                min-width: 150px;
+                padding: 15px;
+            }
+
+            .card h3 {
+                font-size: 1em;
+            }
+
+            .card p {
+                font-size: 12px;
+            }
+
+            .human-body svg {
+                width: 150px;
+            }
+
+            .logo {
+                width: 120px;
+            }
+
+            .btn-iniciar {
+                padding: 10px 20px;
+                font-size: 1em;
+            }
+
+            .modal-content {
+                width: 90%;
+                margin: 30% auto;
+            }
+
+            .carousel-button {
+                font-size: 1.5em;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Logo en la parte superior -->
+    <img src="/img/logo.png" alt="Logo" class="logo">
+
+    <!-- Contenedor principal -->
+    <div class="container">
+        <!-- Sección Superior: Imagen Interactiva del Cuerpo Humano -->
+        <div class="human-body">
+            <!-- SVG del cuerpo humano con partes clickeables -->
+            <svg id="cuerpo-humano" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 500">
+                <!-- Cabeza -->
+                <circle id="cabeza" cx="100" cy="60" r="40" fill="#f2c9ac" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Cuello -->
+                <rect id="cuello" x="90" y="100" width="20" height="30" fill="#f2c9ac" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Torso -->
+                <rect id="torso" x="75" y="130" width="50" height="150" fill="#c9e2ff" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Brazo izquierdo -->
+                <rect id="brazo-izquierdo" x="30" y="130" width="40" height="120" fill="#c9e2ff" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Brazo derecho -->
+                <rect id="brazo-derecho" x="130" y="130" width="40" height="120" fill="#c9e2ff" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Mano izquierda -->
+                <circle id="mano-izquierda" cx="50" cy="250" r="20" fill="#f2c9ac" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Mano derecha -->
+                <circle id="mano-derecha" cx="150" cy="250" r="20" fill="#f2c9ac" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Pierna izquierda -->
+                <rect id="pierna-izquierda" x="75" y="250" width="20" height="150" fill="#c9e2ff" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Pierna derecha -->
+                <rect id="pierna-derecha" x="105" y="250" width="20" height="150" fill="#c9e2ff" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Pie izquierdo -->
+                <ellipse id="pie-izquierdo" cx="85" cy="400" rx="15" ry="10" fill="#f2c9ac" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Pie derecho -->
+                <ellipse id="pie-derecho" cx="125" cy="400" rx="15" ry="10" fill="#f2c9ac" stroke="#000" stroke-width="2" cursor="pointer"/>
+                <!-- Zona íntima (Ejemplo de área delicada) -->
+                <path id="zona-intima" d="M90,280 Q100,300 110,280" fill="#f2c9ac" stroke="#000" stroke-width="2" cursor="pointer"/>
+            </svg>
+            <!-- Tooltip para mostrar el nombre de la parte seleccionada -->
+            <div id="tooltip" class="tooltip"></div>
+        </div>
+
+        <!-- Sección Inferior: Carrusel de Tarjetas -->
+        <div class="carousel">
+            <!-- Controles del carrusel -->
+            <button class="carousel-button prev">&lt;</button>
+            <button class="carousel-button next">&gt;</button>
+            <div class="carousel-track">
+                <!-- Tarjeta 1 -->
+                <div class="card" data-body-part="cabeza">
+                    <h3>Cabeza</h3>
+                    <p>Es importante proteger tu cabeza.</p>
+                </div>
+                <!-- Tarjeta 2 -->
+                <div class="card" data-body-part="cuello">
+                    <h3>Cuello</h3>
+                    <p>Mantén tu cuello seguro.</p>
+                </div>
+                <!-- Tarjeta 3 -->
+                <div class="card" data-body-part="torso">
+                    <h3>Torso</h3>
+                    <p>Tu torso es una zona protegida.</p>
+                </div>
+                <!-- Tarjeta 4 -->
+                <div class="card" data-body-part="brazo-izquierdo">
+                    <h3>Brazo Izquierdo</h3>
+                    <p>Evita toques inapropiados en tus brazos.</p>
+                </div>
+                <!-- Tarjeta 5 -->
+                <div class="card" data-body-part="brazo-derecho">
+                    <h3>Brazo Derecho</h3>
+                    <p>Protege tus brazos de situaciones incómodas.</p>
+                </div>
+                <!-- Tarjeta 6 -->
+                <div class="card" data-body-part="pierna-izquierda">
+                    <h3>Pierna Izquierda</h3>
+                    <p>Cuidar tus piernas es fundamental.</p>
+                </div>
+                <!-- Tarjeta 7 -->
+                <div class="card" data-body-part="pierna-derecha">
+                    <h3>Pierna Derecha</h3>
+                    <p>Mantén tus piernas seguras y protegidas.</p>
+                </div>
+                <!-- Tarjeta 8: Zona íntima -->
+                <div class="card" data-body-part="zona-intima">
+                    <h3>Zona Íntima</h3>
+                    <p>Esta área debe ser protegida y solo tocada por médicos en presencia de familiares de confianza.</p>
+                </div>
+                <!-- Tarjetas duplicadas para bucle infinito -->
+                <div class="card" data-body-part="cabeza">
+                    <h3>Cabeza</h3>
+                    <p>Es importante proteger tu cabeza.</p>
+                </div>
+                <div class="card" data-body-part="cuello">
+                    <h3>Cuello</h3>
+                    <p>Mantén tu cuello seguro.</p>
+                </div>
+                <div class="card" data-body-part="torso">
+                    <h3>Torso</h3>
+                    <p>Tu torso es una zona protegida.</p>
+                </div>
+                <div class="card" data-body-part="brazo-izquierdo">
+                    <h3>Brazo Izquierdo</h3>
+                    <p>Evita toques inapropiados en tus brazos.</p>
+                </div>
+                <div class="card" data-body-part="brazo-derecho">
+                    <h3>Brazo Derecho</h3>
+                    <p>Protege tus brazos de situaciones incómodas.</p>
+                </div>
+                <div class="card" data-body-part="pierna-izquierda">
+                    <h3>Pierna Izquierda</h3>
+                    <p>Cuidar tus piernas es fundamental.</p>
+                </div>
+                <div class="card" data-body-part="pierna-derecha">
+                    <h3>Pierna Derecha</h3>
+                    <p>Mantén tus piernas seguras y protegidas.</p>
+                </div>
+                <div class="card" data-body-part="zona-intima">
+                    <h3>Zona Íntima</h3>
+                    <p>Esta área debe ser protegida y solo tocada por médicos en presencia de familiares de confianza.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón "Iniciar" en la esquina inferior derecha -->
+    <a href="pagina-destino.html" class="btn-iniciar">Iniciar</a>
+
+    <!-- Modal para mensajes informativos -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p id="modal-message">Mensaje informativo aquí.</p>
+        </div>
+    </div>
+
+    <script>
+        // script.js
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const tooltip = document.getElementById('tooltip');
+            const svg = document.getElementById('cuerpo-humano');
+            const cards = document.querySelectorAll('.card');
+            const modal = document.getElementById('modal');
+            const modalMessage = document.getElementById('modal-message');
+            const closeModal = document.querySelector('.close');
+
+            let selectedCard = null;
+
+            // Datos de las partes del cuerpo y mensajes
+            const bodyPartsData = {
+                'cabeza': {
+                    nombre: 'Cabeza',
+                    mensaje: 'Tu cabeza es una zona protegida. Solo un médico o un adulto de confianza pueden tocarla para ayudarte.'
+                },
+                'cuello': {
+                    nombre: 'Cuello',
+                    mensaje: 'Tu cuello debe ser protegido. Solo un médico o un adulto de confianza pueden tocarlo para ayudarte.'
+                },
+                'torso': {
+                    nombre: 'Torso',
+                    mensaje: 'Tu torso es una zona protegida. Solo un médico o un adulto de confianza pueden tocarlo para ayudarte.'
+                },
+                'brazo-izquierdo': {
+                    nombre: 'Brazo Izquierdo',
+                    mensaje: 'Tus brazos deben ser protegidos. Evita toques inapropiados y solo permite el contacto con adultos de confianza.'
+                },
+                'brazo-derecho': {
+                    nombre: 'Brazo Derecho',
+                    mensaje: 'Tus brazos deben ser protegidos. Evita toques inapropiados y solo permite el contacto con adultos de confianza.'
+                },
+                'mano-izquierda': {
+                    nombre: 'Mano Izquierda',
+                    mensaje: 'Tus manos son parte de tu cuerpo y deben ser protegidas. Solo adultos de confianza pueden tocarlas si es necesario.'
+                },
+                'mano-derecha': {
+                    nombre: 'Mano Derecha',
+                    mensaje: 'Tus manos son parte de tu cuerpo y deben ser protegidas. Solo adultos de confianza pueden tocarlas si es necesario.'
+                },
+                'pierna-izquierda': {
+                    nombre: 'Pierna Izquierda',
+                    mensaje: 'Tus piernas deben ser protegidas. Evita toques inapropiados y solo permite el contacto con adultos de confianza.'
+                },
+                'pierna-derecha': {
+                    nombre: 'Pierna Derecha',
+                    mensaje: 'Tus piernas deben ser protegidas. Evita toques inapropiados y solo permite el contacto con adultos de confianza.'
+                },
+                'pie-izquierdo': {
+                    nombre: 'Pie Izquierdo',
+                    mensaje: 'Tus pies son parte de tu cuerpo y deben ser protegidos. Solo adultos de confianza pueden tocarlos si es necesario.'
+                },
+                'pie-derecho': {
+                    nombre: 'Pie Derecho',
+                    mensaje: 'Tus pies son parte de tu cuerpo y deben ser protegidos. Solo adultos de confianza pueden tocarlos si es necesario.'
+                },
+                'zona-intima': {
+                    nombre: 'Zona Íntima',
+                    mensaje: 'Esta área debe ser protegida y solo tocada por un médico en presencia de un familiar o persona de confianza.'
+                }
+            };
+
+            // Selección de una tarjeta
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    // Desactivar selección previa
+                    cards.forEach(c => c.classList.remove('selected'));
+                    // Seleccionar la nueva tarjeta
+                    card.classList.add('selected');
+                    selectedCard = card.getAttribute('data-body-part');
+                    alert(`Has seleccionado: ${bodyPartsData[selectedCard].nombre}. Ahora, por favor, haz clic en la parte correcta del cuerpo.`);
+                });
+            });
+
+            // Manejo de clic en las partes del cuerpo
+            const partes = svg.querySelectorAll('circle, rect, ellipse, path');
+
+            partes.forEach(parte => {
+                parte.addEventListener('click', () => {
+                    if (!selectedCard) {
+                        alert('Por favor, selecciona una tarjeta primero.');
+                        return;
+                    }
+
+                    if (parte.id === selectedCard) {
+                        // Respuesta correcta
+                        mostrarModal(bodyPartsData[parte.id].mensaje);
+                        resetSelection();
+                    } else {
+                        // Respuesta incorrecta
+                        alert('Respuesta incorrecta. Inténtalo de nuevo.');
+                    }
+                });
+
+                // Tooltip al pasar el cursor
+                parte.addEventListener('mouseenter', (e) => {
+                    const nombre = obtenerNombre(parte.id);
+                    tooltip.textContent = nombre;
+                    tooltip.style.opacity = 1;
+
+                    // Posicionar el tooltip cerca del cursor
+                    const rect = svg.getBoundingClientRect();
+                    tooltip.style.left = `${e.clientX - rect.left + 10}px`;
+                    tooltip.style.top = `${e.clientY - rect.top + 10}px`;
+                });
+
+                parte.addEventListener('mousemove', (e) => {
+                    const rect = svg.getBoundingClientRect();
+                    tooltip.style.left = `${e.clientX - rect.left + 10}px`;
+                    tooltip.style.top = `${e.clientY - rect.top + 10}px`;
+                });
+
+                parte.addEventListener('mouseleave', () => {
+                    tooltip.style.opacity = 0;
+                });
+            });
+
+            // Función para convertir el ID en un nombre legible
+            function obtenerNombre(id) {
+                return bodyPartsData[id] ? bodyPartsData[id].nombre : 'Parte Desconocida';
+            }
+
+            // Función para mostrar el modal con el mensaje
+            function mostrarModal(mensaje) {
+                modalMessage.textContent = mensaje;
+                modal.style.display = 'block';
+            }
+
+            // Función para cerrar el modal
+            closeModal.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+
+            // Cerrar el modal al hacer clic fuera de él
+            window.addEventListener('click', (event) => {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            });
+
+            // Función para reiniciar la selección
+            function resetSelection() {
+                cards.forEach(c => c.classList.remove('selected'));
+                selectedCard = null;
+            }
+
+            // Funcionalidad del carrusel
+            const carouselTrack = document.querySelector('.carousel-track');
+            const prevButton = document.querySelector('.carousel-button.prev');
+            const nextButton = document.querySelector('.carousel-button.next');
+
+            let isMoving = false;
+
+            // Función para mover el carrusel
+            function moveCarousel(direction) {
+                if (isMoving) return;
+                isMoving = true;
+
+                const cardWidth = document.querySelector('.card').offsetWidth + 20; // Ancho de la tarjeta + margen
+                const scrollAmount = direction === 'next' ? -cardWidth : cardWidth;
+
+                carouselTrack.style.transition = 'transform 0.5s ease-in-out';
+                carouselTrack.style.transform = `translateX(${scrollAmount}px)`;
+
+                // Restaurar la posición después de la transición
+                carouselTrack.addEventListener('transitionend', () => {
+                    carouselTrack.style.transition = 'none';
+                    if (direction === 'next') {
+                        const firstCard = carouselTrack.firstElementChild;
+                        carouselTrack.appendChild(firstCard);
+                    } else {
+                        const lastCard = carouselTrack.lastElementChild;
+                        carouselTrack.insertBefore(lastCard, carouselTrack.firstElementChild);
+                    }
+                    carouselTrack.style.transform = 'translateX(0)';
+                    isMoving = false;
+                }, { once: true });
+            }
+
+            // Event listeners para los botones
+            if (prevButton && nextButton) {
+                prevButton.addEventListener('click', () => moveCarousel('prev'));
+                nextButton.addEventListener('click', () => moveCarousel('next'));
+            }
+        });
+    </script>
+</body>
+</html>
